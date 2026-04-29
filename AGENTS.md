@@ -9,13 +9,17 @@ and safety rules that apply to the whole team.
 Before planning or implementing, an agent should:
 
 1. Read this `AGENTS.md`.
-2. If present, read the local-only agent context files:
+2. Run `./scripts/agent-session.sh init` if `.agents.local/` or its standard
+   files are missing.
+3. Read the local-only agent context files:
    - `.agents.local/AGENTS.local.md`
    - `.agents.local/plan.md`
    - `.agents.local/progress.md`
    - `.agents.local/implementation.md`
-3. Treat local files as user/session context. They must not be committed.
-4. If local preferences conflict with repo instructions or an explicit user
+4. Treat local files as user/session context. They must not be committed.
+5. Maintain the local plan, progress, and implementation documents as part of
+   normal work. The user should not need to ask for routine updates.
+6. If local preferences conflict with repo instructions or an explicit user
    message, follow the explicit user message first, then this file, then local
    preferences.
 
@@ -93,15 +97,20 @@ Recommended files:
 
 The `.agents.local/` directory is ignored by git and must remain local-only.
 
+Use `./scripts/agent-session.sh status` to inspect local agent context, and
+`./scripts/agent-session.sh snapshot "message"` to record a quick progress
+checkpoint.
+
 ## Worktree Workflow
 
-When writing any plan, implementation, or progress docs, use a branch-specific local worktree.
-Do not create additional worktrees when one already exists for the branch.
-If the current branch already has an appropriate local worktree, continue there.
-If it does not, create one with the helper script.
+When branch-specific plan, implementation, or progress docs should follow a
+branch independently from other work, use a branch-specific local worktree. Do
+not create additional worktrees when one already exists for the branch. Ask
+before creating a new branch or worktree unless the user has already requested
+that action.
 
 ```bash
-./scripts/agent-worktree.sh codex/example-branch
+./scripts/agent-session.sh start codex/example-branch
 ```
 
 The repository must have at least one commit before a useful worktree can be

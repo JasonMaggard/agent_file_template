@@ -22,6 +22,9 @@ branch-specific planning docs.
 Use git worktrees when branch-specific plans and memory should stay attached to a
 branch without being committed to the codebase.
 
+Use helper scripts to make this workflow routine. The user should not have to
+manually create, remember, or update every planning and handoff document.
+
 ## File Responsibilities
 
 ### `AGENTS.md`
@@ -109,6 +112,31 @@ The repo should ignore this directory:
 .agents.local/
 ```
 
+## Automation Contract
+
+Agents should treat the local documents as part of the work loop, not as
+optional paperwork. On session start, an agent should initialize missing local
+docs, read them, and then keep them current.
+
+Minimum automatic behavior:
+
+- Run `./scripts/agent-session.sh init` when `.agents.local/` is missing or
+  incomplete.
+- Read `.agents.local/AGENTS.local.md` before planning or implementing.
+- Update `.agents.local/plan.md` when the objective, phases, blockers, or
+  validation approach changes.
+- Update `.agents.local/progress.md` after meaningful discoveries, completed
+  steps, corrected mistakes, or changed decisions.
+- Update `.agents.local/implementation.md` after adding or changing run, test,
+  verification, environment, or handoff instructions.
+- Use `./scripts/agent-session.sh status` when the agent needs to understand the
+  current branch/worktree/local-doc state.
+- Use `./scripts/agent-session.sh snapshot "message"` for quick progress
+  checkpoints.
+
+These updates should happen without the user needing to say "update the plan" or
+"record our progress" every time.
+
 ## Worktree-Based Branch Memory
 
 A single checkout can only have one local `.agents.local/` state at a time. That
@@ -160,7 +188,16 @@ codex/billing-cleanup -> codex__billing-cleanup
 
 ## Helper Script
 
-This repo includes a helper script:
+This repo includes session and worktree helper scripts:
+
+```bash
+./scripts/agent-session.sh init
+./scripts/agent-session.sh status
+./scripts/agent-session.sh snapshot "finished first pass"
+./scripts/agent-session.sh start codex/billing-cleanup
+```
+
+`agent-session.sh start` delegates to the lower-level worktree helper:
 
 ```bash
 ./scripts/agent-worktree.sh <branch-name>
